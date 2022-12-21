@@ -21,7 +21,7 @@ class Kodepos {
   }
 
   public async search(): Promise<DataResponse> {
-    let url = this.baseurl + "/page/1/?s=" + this.keywords;
+    let url = this.baseurl + "page/1/?s=" + this.keywords;
     let last = 1;
     try {
       let output = await axios({
@@ -77,9 +77,9 @@ class Kodepos {
   }
 
   public async searchIndex(index: number): Promise<DataResults> {
-    const url = this.baseurl + "/page/" + index + "/?s=" + this.keywords;
+    const url = this.baseurl + "page/" + index + "/?s=" + this.keywords;
+    console.log(url);
 
-    let results: DataResults = [];
     try {
       let output = await axios({
         method: "GET",
@@ -88,38 +88,37 @@ class Kodepos {
       });
       const $: cheerio.Root = cheerio.load(output.data);
 
-      let result: DataResult = {};
+      let results: DataResults = [];
       let tr: cheerio.Cheerio = $("tr");
-      if (tr.length > 0) {
-        tr.each((number: number, element: cheerio.Element): void => {
-          if (number === 0) return;
+      tr.each((number: number, element: cheerio.Element): void => {
+        if (number === 0) return;
 
-          let td: cheerio.Cheerio = $(element).find("td");
+        let td: cheerio.Cheerio = $(element).find("td");
+        let result: DataResult = {};
+        td.each((index: number, html: cheerio.Element): void => {
+          let value: string = $(html).find("a").text();
+          let key: string =
+            index === 0
+              ? "province"
+              : index === 1
+              ? "city"
+              : index === 2
+              ? "subdistrict"
+              : index === 3
+              ? "urban"
+              : "postalcode";
 
-          td.each((index: number, html: cheerio.Element): void => {
-            let value: string = $(html).find("a").text();
-            let key: string =
-              index === 0
-                ? "province"
-                : index === 1
-                ? "city"
-                : index === 2
-                ? "subdistrict"
-                : index === 3
-                ? "urban"
-                : "postalcode";
-
-            result[key] = value.trim();
-          });
-
-		  results.push(result);
+          result[key] = value.trim();
         });
 
-        return results;
-      } else {
-        return results;
-      }
+        if (Object.entries(result).length === 5) {
+          results.push(result);
+        }
+      });
+
+      return results;
     } catch (error) {
+      let results: DataResults = [];
       console.error(error);
       return results;
     }
