@@ -112,9 +112,7 @@ class Kodepos {
             result[key] = value.trim();
           });
 
-          if (Object.entries(result).length === 5) {
-            results.push(result);
-          }
+		  results.push(result);
         });
 
         return results;
