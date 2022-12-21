@@ -4,7 +4,7 @@ import axios from 'axios'
 import { DataResponse, DataResult, DataResults } from './types'
 
 class Kodepos {
-	private readonly baseurl: string = 'https://carikodepos.com/'
+	private readonly baseurl: string = 'https://nomorkodepos.com/'
 	private readonly keywords: string
 	private readonly headers: object
 
