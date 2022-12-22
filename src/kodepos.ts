@@ -21,7 +21,7 @@ class Kodepos {
   }
 
   public async search(): Promise<DataResponse> {
-    let url = this.baseurl + "page/1/?s=" + this.keywords;
+    let url = this.baseurl + "/?s=" + this.keywords;
     let last = 1;
     try {
       let output = await axios({
@@ -31,7 +31,22 @@ class Kodepos {
       });
       const $: cheerio.Root = cheerio.load(output.data);
       let lastLink: string | undefined = $(".last").first().attr("href");
-      last = parseInt(lastLink?.substring(29, 31)!);
+
+      if (lastLink === undefined) {
+        let page = $(".page.larger");
+        page.each((number: number, element: cheerio.Element): void => {
+          let link = $(element).attr("href");
+          if (link !== undefined) {
+            lastLink = link;
+          }
+        });
+      }
+
+      if (lastLink === undefined) {
+        last = 1;
+      } else {
+        last = parseInt(lastLink?.substring(29, 31)!);
+      }
     } catch (error) {
       console.error(error);
     }

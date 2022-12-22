@@ -7,7 +7,7 @@ import { parse } from "qs";
 import Routes from "./routes";
 
 class App extends Routes {
-  private readonly port: number = 5000;
+  private readonly port: number = 5001;
   private readonly server: FastifyInstance;
 
   constructor() {
